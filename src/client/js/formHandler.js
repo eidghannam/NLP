@@ -5,34 +5,31 @@ export function handleSubmit(event) {
 
   console.log("::: Form Submitted :::");
 
-  const formdata = new FormData();
-  formdata.append("key", process.env.API_KEY);
-  formdata.append("url", formText);
-  formdata.append("lang", "en");
-
-  fetch("https://api.meaningcloud.com/sentiment-2.1", {
+  fetch("http://localhost:8082/analyze", {
     method: "POST",
-    body: formdata,
-    redirect: "follow",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ url: formText }),
   })
     .then((res) => res.json())
     .then(function (res) {
       if (res.status.code === "0") {
         document.getElementById("results").innerHTML = `
-      <p><strong>Polarity:</strong> ${
-        res.score_tag === "P"
-          ? "Positive"
-          : res.score_tag === "N"
-          ? "Negative"
-          : "Neutral"
-      }</p>
-      <p><strong>Subjectivity:</strong> ${
-        res.subjectivity === "SUBJECTIVE" ? "Subjective" : "Objective"
-      }</p>
-      <p><strong>Text Snippet:</strong> ${
-        res.sentence_list[0]?.text || "N/A"
-      }</p>
-      `;
+          <p><strong>Polarity:</strong> ${
+            res.score_tag === "P"
+              ? "Positive"
+              : res.score_tag === "N"
+              ? "Negative"
+              : "Neutral"
+          }</p>
+          <p><strong>Subjectivity:</strong> ${
+            res.subjectivity === "SUBJECTIVE" ? "Subjective" : "Objective"
+          }</p>
+          <p><strong>Text Snippet:</strong> ${
+            res.sentence_list[0]?.text || "N/A"
+          }</p>
+        `;
       } else {
         document.getElementById(
           "results"

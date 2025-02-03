@@ -17,6 +17,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.17.1",
     "meaning-cloud": "^1.1.10",
+    "node-fetch": "^3.3.2",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
   },

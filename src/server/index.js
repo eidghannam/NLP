@@ -1,30 +1,56 @@
 var path = require("path");
 const express = require("express");
-const mockAPIResponse = require("./mockAPI.js");
-//////////////////////
+const cors = require("cors");
 const dotenv = require("dotenv");
+const fetch = require("node-fetch");
+server;
+
 dotenv.config();
-//////////////////////
 
 const app = express();
 
-// Cors for cross origin allowance
-const cors = require("cors");
 app.use(cors());
 
 app.use(express.static("dist"));
 
+app.use(express.json());
 console.log(__dirname);
 
 app.get("/", function (req, res) {
   res.sendFile("dist/index.html");
 });
 
-// designates what port the app will listen to for incoming requests
-app.listen(8082, function () {
-  console.log("Example app listening on port 8082!");
+app.post("/analyze", async function (req, res) {
+  const { url } = req.body;
+
+  if (!url) {
+    return res
+      .status(400)
+      .json({ status: { code: "1", msg: "No URL provided" } });
+  }
+
+  const formdata = new URLSearchParams();
+  formdata.append("key", process.env.API_KEY);
+  formdata.append("url", url);
+  formdata.append("lang", "en");
+
+  try {
+    const apiResponse = await fetch(
+      "https://api.meaningcloud.com/sentiment-2.1",
+      {
+        method: "POST",
+        body: formdata,
+        redirect: "follow",
+      }
+    );
+    const data = await apiResponse.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ status: { code: "1", msg: "Server error" } });
+  }
 });
 
-app.get("/test", function (req, res) {
-  res.send(mockAPIResponse);
+app.listen(8082, function () {
+  console.log("Example app listening on port 8082!");
 });
