@@ -3,6 +3,12 @@ export function handleSubmit(event) {
 
   const formText = document.getElementById("name").value;
 
+  // Check if the input is blank
+  if (!formText) {
+    alert("Input cannot be blank. Please enter a URL.");
+    return;
+  }
+
   console.log("::: Form Submitted :::");
 
   fetch("http://localhost:8082/analyze", {
